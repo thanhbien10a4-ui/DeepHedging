@@ -103,6 +103,65 @@ batch cập nhật trọng số; validation loss đo với trọng số cố đ�
 phải hai loss được đo cùng một thời điểm. Validation chọn mô hình, chưa phải
 tập test độc lập để kết luận hiệu quả hedging.
 
+## Đánh giá mô hình đã train trên tập test mới
+
+Sau khi một lần huấn luyện hoàn tất (ví dụ 300 epoch), mở PowerShell trong
+thư mục repo và chạy:
+
+```powershell
+git pull --ff-only
+.\.venv\Scripts\python.exe evaluate_cpu.py --run runs/laptop --samples 10000 --seed 20261016 --threads 2
+```
+
+Lệnh đọc cấu hình và `best.weights.h5` của lần train, tạo 10.000 đường mô phỏng
+mới, rồi so sánh mô hình với không hedge (`unhedged`) và hedge delta bằng
+spot (`spot_delta`). Không cần train lại hoặc cài thêm thư viện. Nếu đã đổi seed
+khi train, bỏ `--seed` để tự dùng seed train + 2. Seed test không được trùng
+seed train hoặc validation. Chỉ chạy sau khi tiến trình train đã kết thúc.
+
+Mỗi lần đánh giá tạo thư mục mới `runs/laptop/evaluations/test-<seed>-<timestamp>/`
+gồm `summary.json`, `strategies.csv` và `paths.csv`; không ghi lại trọng số,
+Adam hoặc lịch sử train. Có thể dùng `--output runs/my-test` nếu thư mục đó
+chưa tồn tại. Kiểm tra source và phiên bản dựa trên `run.json` giúp tránh
+nạp trọng số vào bài toán khác. Bản bổ sung evaluator không thay các file
+source được hash trong manifest huấn luyện cũ.
+
+| Chỉ số trong `strategies` | Cách đọc |
+|---|---|
+| `mean_gains` | Trung bình payoff + P&L hedge − chi phí; chưa cộng premium bán option ban đầu |
+| `std_gains` | Độ lệch chuẩn kết quả; thấp hơn nghĩa ít phân tán hơn |
+| `mean_cost` | Chi phí giao dịch trung bình |
+| `loss_var_95` | Phân vị 95% của loss = −gains |
+| `loss_cvar_95` | Loss trung bình trong 5% đường đi xấu nhất; thấp hơn tốt hơn theo tiêu chí này |
+| `empirical_oce_exp2` | Utility `exp2@1` ước lượng trên gains của từng chiến lược; cao hơn tốt hơn |
+
+Trong `deep_hedging_vs_baseline`, số dương là cải thiện theo chỉ số tương ứng:
+chênh lệch mean gains, phần trăm giảm độ lệch chuẩn, mức giảm tail loss hoặc
+mức tăng OCE. Không phải các tiêu chí luôn đồng thời cải thiện. Loss không
+phải phần trăm độ chính xác, và mean gains âm không tự nó chứng minh hedge kém.
+
+OCE thực nghiệm giải lại **một biến vô hướng** để đo risk statistic cho từng
+chiến lược; không cập nhật policy. `frozen_model.utility` giữ nguyên biến OCE
+đã học nên có thể khác số này. `frozen_model.loss` giữ định nghĩa loss lúc train.
+
+Delta baseline dùng spot và implied volatility quan sát được, strike 1, lãi
+suất 0; chỉ giao dịch spot, cùng giới hạn mỗi lệnh và công thức chi phí với
+mô hình. Baseline là tham chiếu đơn giản, không phải chiến lược tối ưu cho
+stochastic volatility hay chi phí giao dịch. Giới hạn áp dụng trực tiếp vào
+lệnh delta; mạng dùng soft clipping để biểu diễn lệnh trong cùng miền khả thi.
+
+Một đặc điểm của simulator gốc được giữ nguyên: trong chế độ stochastic,
+payoff của claim lấy giá **một bước sau** thời điểm thanh toán hedge spot,
+do slice `spots[:, :nSteps+2]`; delta baseline tính thêm một `dt` cho kỳ hạn
+claim. Chế độ `bs` không có độ lệch này. Không thay simulator của checkpoint
+đã train khi đánh giá. Các đường đi có liên hệ qua chuẩn hóa trung bình theo
+cross-section trong simulator; báo cáo không giả định chúng độc lập để đưa
+khoảng tin cậy. Đây là kiểm tra trên mô phỏng cùng phân phối, chưa phải dữ
+liệu thị trường thực hay kiểm tra dưới kịch bản thị trường khác.
+
+Nếu dùng kết quả test để chọn số epoch hoặc đổi cấu hình, tập này trở thành
+validation. Sau khi điều chỉnh, giữ một seed chưa dùng cho đánh giá cuối cùng.
+
 ## Các thay đổi và giới hạn
 
 - TensorArray thay ghép lịch sử hành động tăng dần, giữ nguyên đầu ra và gradient.
@@ -112,7 +171,7 @@ tập test độc lập để kết luận hiệu quả hedging.
 - Best model chọn theo validation, khác trainer gốc chọn theo training loss.
 - Checkpoint TensorFlow khôi phục cả model và Adam; không dùng cache cũ.
 
-Chưa chạy 800 epoch, chưa kiểm chứng trên máy Windows của bạn, chưa kiểm tra
+Các kiểm tra tự động được chạy trên Linux. Chưa chạy 800 epoch, chưa kiểm tra
 toàn bộ notebook nghiên cứu, SANOS hoặc `under_construction`. Một số notebook
 cần thư viện bổ sung. Nếu dùng notebook gốc, đặt `TF_USE_LEGACY_KERAS=1`
 trước khi import TensorFlow và khởi động lại kernel nếu đã import trước đó.

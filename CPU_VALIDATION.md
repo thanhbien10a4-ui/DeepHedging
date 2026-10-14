@@ -1,5 +1,32 @@
 # CPU validation — 2026-10-14
 
+## Saved-model evaluation addition
+
+The new evaluator checks passed on the same Linux/Python 3.12 environment:
+**4 passed, 2 dependency deprecation warnings in 18.07 s**. They cover:
+
+- Exact fractional 5% tail mass, cash translation of OCE, and agreement with
+  independent optimization of the upstream TensorFlow utility.
+- Settlement/cost agreement with gym actions in BS/feedforward and
+  stochastic/recurrent worlds; delta decisions do not use future outcomes.
+- H5 inference agrees with a separately restored selected TensorFlow snapshot.
+  Different inference batch sizes, including partial final batches, agree.
+- All training files remain byte-identical after evaluation. Existing output
+  directories, train/validation seeds, and stale exports after resume are rejected.
+
+A separate CLI process evaluated the existing **3-epoch smoke checkpoint** on
+10,000 fresh stochastic paths (seed 20261016, 10 steps), with 2 CPU threads and
+no visible GPUs. It completed in 3.53 seconds inside `run()`; import time is
+excluded. This verifies execution, not quality of a fully trained model or
+speed on another computer. The user's 300-epoch Windows weights are local
+to their machine and were not evaluated here.
+
+Evidence: [evaluation-pytest.txt](validation/2026-10-14/evaluation-pytest.txt)
+and [evaluation-smoke-summary.json](validation/2026-10-14/evaluation-smoke-summary.json).
+The eight source files hashed in existing training manifests are unchanged.
+The report documents the upstream simulator's stochastic payoff maturity offset
+and cross-sectional normalization; it does not report iid confidence intervals.
+
 ## Final recheck after workspace recovery
 
 The published CPU implementation was retested: **6 passed, 2 dependency
@@ -71,8 +98,9 @@ structures were verified unchanged after clearing only outputs/counts.
 
 ## Limits
 
-No 800-epoch training, independent financial test set, Windows runtime test,
-or complete execution of upstream research notebooks was performed. The
+The original training checks did not include 800-epoch training, an independent
+financial test set, Windows runtime testing, or complete execution of upstream
+research notebooks. The
 CPU runner selects weights on validation, whereas the upstream trainer selects
 on training loss; their selected checkpoints therefore need not be identical.
 Small presets change sample count/horizon and cannot establish an equal-work

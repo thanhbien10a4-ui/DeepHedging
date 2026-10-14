@@ -1,0 +1,83 @@
+{
+  "status": "evaluated",
+  "best_epoch": 3,
+  "samples": 10000,
+  "test_seed": 20261016,
+  "training_seed": 20261014,
+  "validation_seed": 20261015,
+  "world": "stochastic",
+  "steps": 10,
+  "instruments": [
+    "spot",
+    "ATM Call"
+  ],
+  "source_sha256": "d0f44a49d30974cd13d6b9ac77566d86cb47b9c53475f07a5423bbd3a201b0b1",
+  "weights_sha256": "b9badf3e7baea4bc90e32ddd15e2cace81de9b3c2824a7b390c0a482c34d12bc",
+  "evaluator_sha256": "8d4906a0f9f4c5e353aca5d80b79de3ca87dd84487e213c7528731c9ac3c606c",
+  "versions": {
+    "tensorflow": "2.18.1",
+    "tf-keras": "2.18.0",
+    "tensorflow-probability": "0.25.0",
+    "numpy": "1.26.4",
+    "cdxbasics": "0.2.141"
+  },
+  "cpu_threads": 2,
+  "python": "3.12.14",
+  "visible_gpus": [],
+  "frozen_model": {
+    "loss": 0.16563435668312013,
+    "utility": -0.1146052823247388
+  },
+  "strategies": {
+    "deep_hedging": {
+      "mean_gains": -0.05791928482642397,
+      "std_gains": 0.34126139796721594,
+      "mean_cost": 0.009628677028883249,
+      "loss_var_95": 0.66822692155838,
+      "loss_cvar_95": 0.8527779630422592,
+      "empirical_oce_exp2": -0.11232176995505874
+    },
+    "unhedged": {
+      "mean_gains": -0.0479883510351181,
+      "std_gains": 0.06900821424039486,
+      "mean_cost": 0.0,
+      "loss_var_95": 0.19464368224143977,
+      "loss_cvar_95": 0.2432758903503418,
+      "empirical_oce_exp2": -0.05035958499750452
+    },
+    "spot_delta": {
+      "mean_gains": -0.04668281495143725,
+      "std_gains": 0.039563552962229596,
+      "mean_cost": 0.0002526825800333289,
+      "loss_var_95": 0.12521180356791012,
+      "loss_cvar_95": 0.14920155957576475,
+      "empirical_oce_exp2": -0.04746150000995333
+    }
+  },
+  "deep_hedging_vs_baseline": {
+    "unhedged": {
+      "mean_gains_difference": -0.009930933791305871,
+      "std_reduction_percent": -394.5228647395633,
+      "loss_cvar_95_reduction": -0.6095020726919174,
+      "empirical_oce_improvement": -0.06196218495755422
+    },
+    "spot_delta": {
+      "mean_gains_difference": -0.011236469874986721,
+      "std_reduction_percent": -762.565094426707,
+      "loss_cvar_95_reduction": -0.7035764034664944,
+      "empirical_oce_improvement": -0.06486026994510541
+    }
+  },
+  "invocation_wall_seconds": 3.530931679999412,
+  "output": "/workspace/scratch/c34b22f150be/deephedging/runs/evaluation-cli-check",
+  "notes": [
+    "Fresh seed, same simulator distribution. No training or policy selection on test paths.",
+    "Gains include claim payoff, trading P&L and costs; no initial option premium is added.",
+    "Lower std and loss_cvar_95 are better for those risk metrics; higher empirical OCE is better.",
+    "Empirical OCE re-estimates only the scalar risk statistic for each strategy. Frozen-model utility uses the learned intercept; these are different estimators.",
+    "Spot delta uses only spot and observed implied volatility, zero rates, the same trade bounds/costs and settlement, and no option trades. It is a heuristic benchmark.",
+    "Original stochastic simulator evaluates the claim one dt after spot hedge settlement; this is preserved, and delta maturity includes that extra dt. BS mode has no offset.",
+    "Paths share the simulator's cross-sectional normalization. Metrics are descriptive; no iid confidence intervals or real-market profitability claims are provided.",
+    "Reusing this test to choose epochs/hyperparameters makes it validation; reserve a new seed for the final assessment after further tuning."
+  ]
+}

@@ -5,6 +5,8 @@
 > Use Python 3.11 or 3.12 and `requirements-cpu.txt`, then `pip install --no-deps -e .`.
 > Start with `python run_cpu.py --preset smoke --output runs/smoke`.
 > Model/Adam checkpoints, a headless runner and batched validation are provided.
+> After training: `python evaluate_cpu.py --run runs/laptop --samples 10000 --threads 2`
+> evaluates saved weights on fresh paths against unhedged and spot-delta baselines.
 > [Provenance](UPSTREAM.md) · [Validation evidence](CPU_VALIDATION.md).
 >
 > Below is the original upstream README. Its old installation commands do not
