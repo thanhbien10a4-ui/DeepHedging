@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deephedging-cpu"
+version = "0.1.0"
+description = "Hans Buehler's Deep Hedging examples with a CPU training runner"
+requires-python = ">=3.10,<3.13"
+license = {file = "LICENSE"}
+dependencies = [
+    "tensorflow>=2.18,<2.19",
+    "tf-keras>=2.18,<2.19",
+    "tensorflow-probability==0.25.0",
+    "numpy>=1.26,<2",
+    "cdxbasics==0.2.141",
+    "scipy>=1.12,<2",
+    "matplotlib>=3.8,<4",
+    "psutil>=5.9,<8",
+    "ipython>=8,<10",
+]
+
+[project.scripts]
+deephedging-cpu = "deephedging.run_cpu:main"
+
+[tool.setuptools]
+packages = ["deephedging"]
+package-dir = {deephedging = "."}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

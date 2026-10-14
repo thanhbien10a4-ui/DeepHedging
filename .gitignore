@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# CPU training outputs and original notebook caches
+runs/
+.deephedging_cache/
+*.weights.h5

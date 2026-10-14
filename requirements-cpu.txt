@@ -1,0 +1,13 @@
+# Tested CPU stack: use 64-bit Python 3.11 or 3.12, not Python 3.13.
+# tf-keras requires the tensorflow distribution. Installing tensorflow-cpu
+# alongside it on Linux would install two overlapping distributions.
+# No CUDA extras are installed; run_cpu.py explicitly disables GPU devices.
+tensorflow==2.18.1
+tf-keras==2.18.0
+tensorflow-probability==0.25.0
+numpy==1.26.4
+cdxbasics==0.2.141
+scipy>=1.12,<2
+matplotlib>=3.8,<4
+psutil>=5.9,<8
+ipython>=8,<10

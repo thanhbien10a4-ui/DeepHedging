@@ -1,4 +1,15 @@
 # Deep Hedging
+
+> **CPU edition — Windows / Linux**: see [CPU_GUIDE_VI.md](CPU_GUIDE_VI.md)
+> for setup, training, checkpoint/resume and limitations (Vietnamese).
+> Use Python 3.11 or 3.12 and `requirements-cpu.txt`, then `pip install --no-deps -e .`.
+> Start with `python run_cpu.py --preset smoke --output runs/smoke`.
+> Model/Adam checkpoints, a headless runner and batched validation are provided.
+> [Provenance](UPSTREAM.md) · [Validation evidence](CPU_VALIDATION.md).
+>
+> Below is the original upstream README. Its old installation commands do not
+> describe the tested CPU environment above. Stored notebook outputs are cleared.
+
 ## Reinforcement Learning for Hedging Derviatives under Market Frictions
 
 This archive contains a sample implementation of of the [Deep Hedging framework](http://deep-hedging.com). The purpose of the code base is to illustrate the concepts behind Deep Hedging. The code is not optimized for speed. Any production use will require additional safeguards before use.

@@ -162,13 +162,14 @@ class VanillaDeepHedgingGym(tf.keras.Model):
         cost    = tf.zeros_like(payoff, dtype=dh_dtype)                                                       # [?,]
         delta   = tf.zeros_like(trading_cost[:,0,:], dtype=dh_dtype)                                          # [?,nInst]
         action  = tf.zeros_like(trading_cost[:,0,:], dtype=dh_dtype)                                          # [?,nInst]
-        actions = tf.zeros_like(trading_cost[:,0,:][:,tf.newaxis,:], dtype=dh_dtype)                          # [?,0,nInst]
+        # Write each time slice once instead of repeatedly copying the history.
+        actions = tf.TensorArray(dh_dtype, size=nSteps,
+                                 element_shape=tf.TensorShape([None, nInst]))
         state   = self.agent.initial_state( features_time_0, training=training ) if self.agent.is_recurrent else tf.zeros_like(pnl, dtype=dh_dtype)  # [?,nStates] if states are used else [?]
         idelta  = self.agent.initial_delta( features_time_0, training=training ) if self.agent.has_initial_delta else tf.zeros_like(delta, dtype=dh_dtype)  # [?,nInst] 
         
         t       = 0
         while tf.less(t,nSteps, name="main_loop"): # logically equivalent to: for t in range(nSteps):
-            tf.autograph.experimental.set_loop_options( shape_invariants=[(actions, tf.TensorShape([None,None,nInst]))] )
             
             # 1: build features, including recurrent state
             live_features = dict( action=action, delta=delta, cost=cost, pnl=pnl )
@@ -189,8 +190,7 @@ class VanillaDeepHedgingGym(tf.keras.Model):
             pnl            += tf.reduce_sum( action * hedges[:,t,:], axis=1, name="pnl_t" )
 
             # 4: record actions per path, per step, continue loop
-            action_        =  tf.stop_gradient( action )[:,tf.newaxis,:]
-            actions        =  tf.concat( [actions,action_], axis=1, name="actions") if t>0 else action_
+            actions        =  actions.write(t, tf.stop_gradient(action))
             idelta         *= 0. # no more initial delta
             t              += 1  # loop
 
@@ -219,7 +219,7 @@ class VanillaDeepHedgingGym(tf.keras.Model):
             payoff   = tf.stop_gradient( payoff ),                # [?,]
             pnl      = tf.stop_gradient( pnl ),                   # [?,]
             cost     = tf.stop_gradient( cost ),                  # [?,]
-            actions  = tf.concat( actions, axis=1, name="actions" ) # [?,nSteps,nInst]
+            actions  = tf.transpose(actions.stack(), [1, 0, 2], name="actions") # [?,nSteps,nInst]
         )
     
     # -------------------
