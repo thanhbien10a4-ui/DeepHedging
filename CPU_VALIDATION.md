@@ -1,5 +1,17 @@
 # CPU validation — 2026-10-14
 
+## Final recheck after workspace recovery
+
+The published CPU implementation was retested: **6 passed, 2 dependency
+deprecation warnings in 49.12 s**. A fresh CLI smoke run completed 2 epochs
+and 8 Adam steps; a separate Python process resumed it to 3 epochs and
+12 Adam steps with no visible GPUs. `pip check` reported no broken requirements.
+
+GitHub blob hashes were checked against all 12 added/modified delivery files.
+The other 44 upstream files match the source snapshot, allowing only cleared
+notebook outputs/execution counts. Raw recheck evidence is under
+[validation/2026-10-14](validation/2026-10-14).
+
 ## Scope and environment
 
 The CPU runner was tested with Python 3.12.14 on Linux x86-64, TensorFlow

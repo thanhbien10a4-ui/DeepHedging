@@ -1,0 +1,20 @@
+{
+  "status": "target_reached",
+  "completed_epochs": 3,
+  "best_epoch": 3,
+  "best_validation_loss": 0.17181441187858582,
+  "validation": {
+    "loss": 0.17181441187858582,
+    "utility": -0.11801985651254654,
+    "mean_gains": -0.05971556901931763,
+    "mean_cost": 0.009629225358366966
+  },
+  "optimizer_steps": 12,
+  "median_warm_train_epoch_seconds": null,
+  "invocation_wall_seconds": 7.2401920869999685,
+  "cpu_threads": 2,
+  "python": "3.12.14",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+  "visible_gpus": [],
+  "note": "Validation selects weights; it is not an independent test or a claim of convergence."
+}

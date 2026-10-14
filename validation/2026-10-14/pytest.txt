@@ -1,0 +1,12 @@
+......                                                                   [100%]
+=============================== warnings summary ===============================
+../.cpu-venv/lib/python3.12/site-packages/tensorflow_probability/python/__init__.py:57
+  /workspace/scratch/c34b22f150be/.cpu-venv/lib/python3.12/site-packages/tensorflow_probability/python/__init__.py:57: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    if (distutils.version.LooseVersion(tf.__version__) <
+
+../.cpu-venv/lib/python3.12/site-packages/tensorflow_probability/python/__init__.py:58
+  /workspace/scratch/c34b22f150be/.cpu-venv/lib/python3.12/site-packages/tensorflow_probability/python/__init__.py:58: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    distutils.version.LooseVersion(required_tensorflow_version)):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+6 passed, 2 warnings in 49.12s

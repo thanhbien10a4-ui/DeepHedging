@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "upstream_commit": "fe53fd9a7e402d4ba18bd5b9ec704e0361554f7c",
+  "source_sha256": "d0f44a49d30974cd13d6b9ac77566d86cb47b9c53475f07a5423bbd3a201b0b1",
+  "parameters": {
+    "samples": 256,
+    "val_samples": 128,
+    "steps": 10,
+    "batch_size": 64,
+    "eval_every": 5,
+    "patience": 0,
+    "seed": 20261014,
+    "learning_rate": 0.001,
+    "world": "stochastic",
+    "recurrent": 0
+  },
+  "versions": {
+    "tensorflow": "2.18.1",
+    "tf-keras": "2.18.0",
+    "tensorflow-probability": "0.25.0",
+    "numpy": "1.26.4",
+    "cdxbasics": "0.2.141"
+  }
+}
